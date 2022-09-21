@@ -172,10 +172,9 @@ pub struct User {
     pub id: i32,
     email: String,
     pub is_admin: bool,
+    totp_secret: String,
     #[serde(skip_serializing)]
     password: String,
-    #[serde(skip_serializing)]
-    totp_secret: String,
 }
 
 /// The [`AdminUser`] guard can be used analogously to [`User`].
