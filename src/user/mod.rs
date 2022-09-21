@@ -4,6 +4,7 @@ mod users;
 use crate::prelude::*;
 use argon2::verify_encoded as verify;
 
+use google_authenticator::GoogleAuthenticator;
 use rand::random;
 pub fn rand_string(size: usize) -> String {
     (0..)
@@ -27,13 +28,17 @@ impl Users {
     #[throws(Error)]
     async fn login(&self, form: &Login) -> String {
         let form_pwd = &form.password.as_bytes();
+        let form_totp = &form.totp_token;
         let user = self
             .conn
             .get_user_by_email(&form.email.to_lowercase())
             .await
             .map_err(|_| Error::EmailDoesNotExist(form.email.clone()))?;
         let user_pwd = &user.password;
-        if verify(user_pwd, form_pwd)? {
+        let pwd_correct = verify(user_pwd, form_pwd)?;
+        let g_auth = GoogleAuthenticator::new();
+        let totp_correct = g_auth.verify_code(&user.totp_secret, form_totp, 1, 0);
+        if pwd_correct && totp_correct {
             self.set_auth_key(user.id)?
         } else {
             throw!(Error::UnauthorizedError)

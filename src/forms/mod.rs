@@ -7,6 +7,7 @@ pub struct Login {
     #[validate(email)]
     pub email: String,
     pub(crate) password: String,
+    pub(crate) totp_token: String,
 }
 
 /// The `Signup` form is used along with the [`Auth`] guard to create new users.
@@ -21,6 +22,7 @@ pub struct Signup {
         custom = "has_uppercase"
     )]
     pub(crate) password: String,
+    pub(crate) totp_token: String,
 }
 impl Debug for Signup {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -46,6 +48,7 @@ impl From<Signup> for Login {
         Login {
             email: form.email,
             password: form.password,
+            totp_token: form.totp_token,
         }
     }
 }
@@ -55,6 +58,7 @@ impl From<Login> for Signup {
         Self {
             email: form.email,
             password: form.password,
+            totp_token: form.totp_token,
         }
     }
 }
@@ -64,6 +68,7 @@ impl<T: Deref<Target = Signup>> From<T> for Login {
         Login {
             email: form.email.clone(),
             password: form.password.clone(),
+            totp_token: form.totp_token.clone(),
         }
     }
 }
