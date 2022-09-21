@@ -5,7 +5,7 @@ use crate::prelude::*;
 use rocket::http::Status;
 use rocket::request::{FromRequest, Outcome, Request};
 
-use google_authenticator::{GoogleAuthenticator, ErrorCorrectionLevel};
+use google_authenticator::GoogleAuthenticator;
 
 impl User {
     /// This method allows to reset the password of a user.
