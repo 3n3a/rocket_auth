@@ -42,10 +42,10 @@ impl Users {
         let totp_correct = g_auth.verify_code(&user.totp_secret, form_totp, 1, 0);
 
         // totp can only be checked after user has set it up
-        if pwd_correct {
-            println!("totp_correct: {:?}, is_first_login: {:?}", totp_correct, is_first_login);
+        if (pwd_correct && totp_correct) || (pwd_correct && is_first_login) {
             self.set_auth_key(user.id)?
         } else {
+            println!("pwd_correct: {:?}, totp_correct: {:?}, is_first_login: {:?}", pwd_correct, totp_correct, is_first_login);
             throw!(Error::UnauthorizedError)
         }
     }

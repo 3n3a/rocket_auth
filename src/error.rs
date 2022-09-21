@@ -30,7 +30,7 @@ pub enum Error {
     #[error("That email address already exists. Try logging in.")]
     EmailAlreadyExists,
     /// This error occurs when the user does exist, but their password was incorrect.
-    #[error("Incorrect email or password")]
+    #[error("Incorrect email, password or totp token")]
     UnauthorizedError,
 
     /// A wrapper around [`validator::ValidationError`].
