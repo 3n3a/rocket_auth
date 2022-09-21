@@ -94,6 +94,12 @@ impl User {
         }
     }
 
+    /// Secret Token has to be accessible publicly so 
+    /// an implementation can generate a qr code for the user.
+    pub fn totp_secret(&self) -> &str {
+        &self.totp_secret
+    }
+
     /// This function compares the input totp token, to the stored secret
     /// it returns a boolean, if true the user may enter.
     #[throws(Error)]
