@@ -89,7 +89,7 @@ impl<'a> Auth<'a> {
     /// ```
     #[throws(Error)]
     pub async fn login(&self, form: &Login) {
-        let key = self.users.login(form).await?;
+        let key = self.users.login(form, false).await?;
         let user = self.users.get_by_email(&form.email.to_lowercase()).await?;
         let session = Session {
             id: user.id,

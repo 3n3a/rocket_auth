@@ -26,7 +26,7 @@ impl Users {
     }
 
     #[throws(Error)]
-    async fn login(&self, form: &Login) -> String {
+    async fn login(&self, form: &Login, is_signup: bool) -> String {
         let form_pwd = &form.password.as_bytes();
         let form_totp = &form.totp_token;
         let user = self
@@ -36,9 +36,13 @@ impl Users {
             .map_err(|_| Error::EmailDoesNotExist(form.email.clone()))?;
         let user_pwd = &user.password;
         let pwd_correct = verify(user_pwd, form_pwd)?;
+        let is_first_login = is_signup || false;
+
         let g_auth = GoogleAuthenticator::new();
         let totp_correct = g_auth.verify_code(&user.totp_secret, form_totp, 1, 0);
-        if pwd_correct && totp_correct {
+
+        // totp can only be checked after user has set it up
+        if (pwd_correct && totp_correct) || (pwd_correct && is_first_login) {
             self.set_auth_key(user.id)?
         } else {
             throw!(Error::UnauthorizedError)
